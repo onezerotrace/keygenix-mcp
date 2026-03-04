@@ -7,7 +7,7 @@ export const signTransactionTool = {
   description:
     "Sign a blockchain transaction using a TEE-stored key. " +
     "Supports EVM (RLP hex), SOL (base58/base64/hex), SUI, and other chains. " +
-    "Provide either keyCode+deriving OR address (no deriving needed).",
+    "keyCode is always required. Optionally provide address to skip HD derivation.",
   inputSchema: {
     type: "object",
     properties: {
@@ -36,7 +36,7 @@ export const signTransactionTool = {
         description: "BIP44 path (default: m/44'/60'/0'/0/0 for EVM). Only used with keyCode.",
       },
     },
-    required: ["tx", "chain"],
+    required: ["keyCode", "tx", "chain"],
   },
 };
 
@@ -44,7 +44,7 @@ export const signMessageTool = {
   name: "sign_message",
   description:
     "Sign an arbitrary message (hex-encoded sha256 hash) using a TEE-stored key. " +
-    "Provide either keyCode+deriving OR address.",
+    "keyCode is always required. Optionally provide address to skip HD derivation.",
   inputSchema: {
     type: "object",
     properties: {
@@ -59,7 +59,7 @@ export const signMessageTool = {
         description: "BIP44 path (default: m/44'/60'/0'/0/0). Only used with keyCode.",
       },
     },
-    required: ["message"],
+    required: ["keyCode", "message"],
   },
 };
 
@@ -89,8 +89,8 @@ export async function handleSignTransaction(
     path?: string;
   }
 ) {
-  if (!args.keyCode && !args.address) {
-    throw new Error("Either keyCode or address must be provided");
+  if (!args.keyCode) {
+    throw new Error("keyCode is required (address is optional — if provided, deriving is skipped)");
   }
 
   // Build txBundle
@@ -114,16 +114,14 @@ export async function handleSignTransaction(
   const timestamp = Math.floor(Date.now() / 1000);
   const authSignature = buildAuthSignature(config.authPrivKey, txBundle, timestamp);
 
-  if (args.address && args.keyCode) {
-    // Prefer address-based signing
+  if (args.address) {
+    // Address-based signing — no deriving needed
     return apiCall(
       config,
       "POST",
       walletUrl(config, `/keys/${args.keyCode}/addresses/${args.address}/sign_transaction`),
       { authSignature, timestamp, txBundle }
     );
-  } else if (args.address) {
-    throw new Error("keyCode is required when using address-based signing");
   } else {
     const defaults = CHAIN_DEFAULTS[args.chain] ?? CHAIN_DEFAULTS.EVM;
     return apiCall(
@@ -153,14 +151,15 @@ export async function handleSignMessage(
     path?: string;
   }
 ) {
-  if (!args.keyCode && !args.address) {
-    throw new Error("Either keyCode or address must be provided");
+  if (!args.keyCode) {
+    throw new Error("keyCode is required (address is optional — if provided, deriving is skipped)");
   }
 
   const timestamp = Math.floor(Date.now() / 1000);
   const authSignature = buildAuthSignature(config.authPrivKey, args.message, timestamp);
 
-  if (args.address && args.keyCode) {
+  if (args.address) {
+    // Address-based signing — no deriving needed
     return apiCall(
       config,
       "POST",
