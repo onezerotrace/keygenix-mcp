@@ -1,0 +1,61 @@
+{
+  "name": "keygenix-mcp",
+  "version": "1.0.0",
+  "description": "Keygenix MCP Server — Non-custodial TEE key management & signing for AI agents",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "keygenix-mcp": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "npx ts-node --esm src/index.ts",
+    "prepublishOnly": "npm run build",
+    "lint": "eslint src --ext .ts"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "keygenix",
+    "blockchain",
+    "crypto",
+    "key-management",
+    "tee",
+    "web3",
+    "defi",
+    "signing",
+    "non-custodial"
+  ],
+  "author": "Keygenix <support@keygenix.pro>",
+  "license": "MIT",
+  "homepage": "https://keygenix.pro",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/keygenix/keygenix-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/keygenix/keygenix-mcp/issues"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "@noble/ciphers": "^2.1.1",
+    "@noble/curves": "^2.0.1",
+    "@noble/hashes": "^2.0.1",
+    "axios": "^1.7.0",
+    "json-stable-stringify": "^1.3.0"
+  },
+  "devDependencies": {
+    "@types/json-stable-stringify": "^1.0.0",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.4.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
