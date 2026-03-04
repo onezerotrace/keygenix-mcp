@@ -2,7 +2,6 @@
 
 **Keygenix MCP Server** — Non-custodial TEE key management & signing for AI agents.
 
-[![npm version](https://badge.fury.io/js/keygenix-mcp.svg)](https://www.npmjs.com/package/keygenix-mcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 Private keys are generated, stored, and used exclusively inside a **Trusted Execution Environment (TEE)**. They never leave in plaintext — not to you, not to Keygenix, not to the AI.
@@ -19,14 +18,12 @@ Private keys are generated, stored, and used exclusively inside a **Trusted Exec
 4. Generate two keypairs (run once):
 
 ```bash
-# Install first
-npm install github:onezerotrace/keygenix-mcp
+# Use the CLI to generate keypairs (easiest)
+git clone https://github.com/onezerotrace/keygenix-skill
+cd keygenix-skill/cli && npm install
 
-# Generate API Auth keypair
-node node_modules/keygenix-mcp/dist/index.js   # then call keygen tool
-
-# Or use the CLI (no MCP needed)
-# See: https://github.com/onezerotrace/keygenix-skill/tree/main/cli
+node client.js keygen   # → copy publicKey as API Auth Key
+node client.js keygen   # → copy publicKey as AuthKey (separate keypair)
 ```
 
 5. Register both **public keys** in the Keygenix dashboard.

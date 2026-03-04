@@ -35,7 +35,7 @@ export async function apiCall(config, method, url, body) {
         "content-type": "application/json",
     };
     try {
-        const res = await axios({ method, url, data: body, headers });
+        const res = await axios({ method, url, data: body, headers, timeout: 30000 });
         const result = res.data;
         if (result.status !== 0) {
             throw new Error(`Keygenix error [${result.status}]: ${result.msg}`);

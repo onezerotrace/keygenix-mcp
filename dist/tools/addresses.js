@@ -16,7 +16,7 @@ export const listAddressesTool = {
 export const createAddressTool = {
     name: "create_address",
     description: "Derive a new address from a key for a specific chain. " +
-        "Use getOrCreate:true to avoid duplicates (idempotent).",
+        "Idempotent — returns the existing address if already derived for the same path.",
     inputSchema: {
         type: "object",
         properties: {
