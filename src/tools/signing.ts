@@ -48,15 +48,20 @@ export const signMessageTool = {
   inputSchema: {
     type: "object",
     properties: {
-      keyCode: { type: "string", description: "Key code (use with path)" },
-      address: { type: "string", description: "Specific address to sign with (alternative to keyCode+path)" },
+      keyCode: { type: "string", description: "Key code" },
+      address: { type: "string", description: "Specific address to sign with (skips HD derivation)" },
       message: {
         type: "string",
         description: "Message to sign as 64-char hex (sha256 hash of the original message)",
       },
+      chain: {
+        type: "string",
+        enum: ["EVM", "SOL", "SUI", "BTC", "TRX", "TON", "COSMOS"],
+        description: "Chain type — determines default curve and path. Required when address is not provided.",
+      },
       path: {
         type: "string",
-        description: "BIP44 path (default: m/44'/60'/0'/0/0). Only used with keyCode.",
+        description: "BIP44 path override. Uses chain default if omitted.",
       },
     },
     required: ["keyCode", "message"],
@@ -148,6 +153,7 @@ export async function handleSignMessage(
     keyCode?: string;
     address?: string;
     message: string;
+    chain?: string;
     path?: string;
   }
 ) {
@@ -167,6 +173,7 @@ export async function handleSignMessage(
       { authSignature, timestamp, message: args.message }
     );
   } else {
+    const defaults = CHAIN_DEFAULTS[args.chain ?? "EVM"] ?? CHAIN_DEFAULTS.EVM;
     return apiCall(
       config,
       "POST",
@@ -176,9 +183,9 @@ export async function handleSignMessage(
         timestamp,
         message: args.message,
         deriving: {
-          curve: "secp256k1",
-          path: args.path ?? "m/44'/60'/0'/0/0",
-          deriveType: "bip32",
+          curve: defaults.curve,
+          path: args.path ?? defaults.path,
+          deriveType: defaults.deriveType,
         },
       }
     );

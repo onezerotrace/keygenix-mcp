@@ -155,7 +155,7 @@ async function main() {
         case "sign_message":
           result = await handleSignMessage(config, args as {
             keyCode?: string; address?: string;
-            message: string; path?: string;
+            message: string; chain?: string; path?: string;
           });
           break;
 
